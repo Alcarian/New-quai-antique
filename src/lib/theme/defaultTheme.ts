@@ -19,16 +19,16 @@ const defaultTheme = createTheme({
       white: "#fff",
     },
     primary: {
-      main: "#eb6f07",
-      light: "rgb(242, 117, 72)",
-      dark: "#F4B339",
+      main: "#007BFF", // Bleu pour les accents
+      light: "#66B2FF",
+      dark: "#0056B3",
       contrastText: "#fff",
     },
     secondary: {
-      main: "#6b2274",
-      light: "rgb(89, 107, 167)",
-      dark: "#0a48a6",
-      contrastText: "#fff",
+      main: "#FFC107", // Or pour des éléments secondaires
+      light: "#FFD54F",
+      dark: "#FFA000",
+      contrastText: "#000",
     },
     error: {
       main: "#CC3333",
@@ -59,13 +59,13 @@ const defaultTheme = createTheme({
       A700: "#616161",
     },
     text: {
-      primary: "rgba(0, 0, 0, 0.87)",
-      secondary: "rgba(0, 0, 0, 0.54)",
+      primary: "#333333", // Gris foncé pour le texte principal
+      secondary: "#666666", // Gris clair pour le texte secondaire
       disabled: "rgba(0, 0, 0, 0.38)",
     },
     background: {
-      paper: "#fff",
-      default: "#fafafa",
+      paper: "#ffffff", // Fond blanc pour les cartes
+      default: "#f8f9fa", // Gris très clair pour le fond général
     },
     action: {
       hoverOpacity: 0.08,
@@ -119,17 +119,13 @@ const defaultTheme = createTheme({
     fontWeightBold: 700,
     h1: {
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-      fontSize: "6rem",
-      fontWeight: 300,
-      lineHeight: 1.167,
-      letterSpacing: "-0.01562em",
+      fontSize: "2.5rem",
+      fontWeight: 700,
     },
     h2: {
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-      fontSize: "3.75rem",
-      fontWeight: 300,
-      lineHeight: 1.2,
-      letterSpacing: "-0.00833em",
+      fontSize: "2rem",
+      fontWeight: 600,
     },
     h3: {
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
@@ -179,6 +175,7 @@ const defaultTheme = createTheme({
       fontWeight: 400,
       lineHeight: 1.5,
       letterSpacing: "0.00938em",
+      color: "#333333",
     },
     body2: {
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
@@ -186,6 +183,7 @@ const defaultTheme = createTheme({
       fontWeight: 400,
       lineHeight: 1.43,
       letterSpacing: "0.01071em",
+      color: "#666666",
     },
     button: {
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
