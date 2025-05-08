@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import IconButton from "@mui/material/IconButton";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = () => {
@@ -20,6 +23,10 @@ const Login: React.FC = () => {
     } else {
       setError("Identifiants incorrects. Veuillez réessayer.");
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -47,12 +54,21 @@ const Login: React.FC = () => {
       />
       <TextField
         label="Mot de passe"
-        type="password"
+        type={showPassword ? "text" : "password"}
         variant="outlined"
         fullWidth
         sx={{ marginBottom: 2, maxWidth: 400 }}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        slotProps={{
+          input: {
+            endAdornment: (
+              <IconButton onClick={togglePasswordVisibility} edge="end">
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            ),
+          },
+        }}
       />
       {error && (
         <Typography color="error" sx={{ marginBottom: 2 }}>

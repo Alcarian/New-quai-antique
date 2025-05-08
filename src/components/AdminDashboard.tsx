@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -12,10 +13,16 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  CardMedia,
+  CardActions,
 } from "@mui/material";
 import productsData from "../data/products";
+import EditProductModal from "./EditProductModal";
+import Filter from "./Filter";
+import PriceFilter from "./PriceFilter";
+import TypeFilter from "./TypeFilter";
 
-interface Product {
+export interface Product {
   id: number;
   name: string;
   description: string;
@@ -24,6 +31,7 @@ interface Product {
 }
 
 const AdminDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>(productsData);
   const [newProduct, setNewProduct] = useState<Product>({
     id: 0,
@@ -35,6 +43,9 @@ const AdminDashboard: React.FC = () => {
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState<Product | null>(null);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
 
   // Gère les changements dans les champs de texte pour ajouter ou éditer un produit
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,19 +87,43 @@ const AdminDashboard: React.FC = () => {
 
   // Ouvre le formulaire d'édition pour un produit
   const handleEditProduct = (product: Product) => {
-    setEditProduct(product);
+    setProductToEdit(product);
+    setEditModalOpen(true);
   };
 
   // Sauvegarde les modifications apportées à un produit
-  const handleSaveEdit = () => {
-    if (editProduct) {
-      setProducts(
-        products.map((product) =>
-          product.id === editProduct.id ? editProduct : product,
-        ),
-      );
-      setEditProduct(null);
-    }
+  const handleSaveEdit = (updatedProduct: Product) => {
+    setProducts(
+      products.map((product) =>
+        product.id === updatedProduct.id ? updatedProduct : product,
+      ),
+    );
+    setEditModalOpen(false);
+  };
+
+  const handleFilterByName = (query: string) => {
+    const lowerCaseQuery = query.toLowerCase();
+    const filtered = products.filter((product) =>
+      product.name.toLowerCase().includes(lowerCaseQuery),
+    );
+    setFilteredProducts(filtered);
+  };
+
+  const handleFilterByPrice = (min: number, max: number) => {
+    const filtered = products.filter((product) => {
+      const price = parseInt(product.price.replace("€", ""), 10);
+      return price >= min && price <= max;
+    });
+    setFilteredProducts(filtered);
+  };
+
+  const handleFilterByType = (type: string) => {
+    const filtered = products.filter((product) =>
+      type === ""
+        ? true
+        : product.name.toLowerCase().includes(type.toLowerCase()),
+    );
+    setFilteredProducts(filtered);
   };
 
   return (
@@ -148,7 +183,7 @@ const AdminDashboard: React.FC = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={handleSaveEdit}
+            onClick={() => handleSaveEdit(editProduct!)}
             sx={{ width: "100%", padding: 1.5, fontSize: "1rem" }}
           >
             Sauvegarder
@@ -165,19 +200,42 @@ const AdminDashboard: React.FC = () => {
         )}
       </Box>
 
+      <Button
+        variant="contained"
+        color="secondary"
+        sx={{ marginBottom: 4 }}
+        onClick={() => navigate("/produits")}
+      >
+        Retour à la page des produits
+      </Button>
+
+      <Filter onFilter={handleFilterByName} />
+      <PriceFilter onPriceChange={handleFilterByPrice} />
+      <TypeFilter onTypeChange={handleFilterByType} />
+
       <Typography variant="h6" sx={{ marginBottom: 2, fontWeight: "bold" }}>
         Liste des produits
       </Typography>
-      <Grid container spacing={2}>
-        {products.map((product) => (
+      <Grid container spacing={2} justifyContent="center" alignItems="stretch">
+        {filteredProducts.map((product) => (
           <Grid key={product.id}>
             <Card
               sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                height: "100%",
                 boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
                 borderRadius: 2,
                 overflow: "hidden",
               }}
             >
+              <CardMedia
+                component="img"
+                height="140"
+                image={product.image}
+                alt={product.name}
+              />
               <CardContent>
                 <Typography
                   variant="h5"
@@ -199,11 +257,13 @@ const AdminDashboard: React.FC = () => {
                 >
                   {product.price}
                 </Typography>
+              </CardContent>
+              <CardActions>
                 <Button
                   variant="contained"
                   color="error"
                   onClick={() => handleOpenDeleteModal(product)}
-                  sx={{ marginTop: 2, width: "100%", padding: 1 }}
+                  sx={{ width: "100%" }}
                 >
                   Supprimer
                 </Button>
@@ -211,11 +271,11 @@ const AdminDashboard: React.FC = () => {
                   variant="contained"
                   color="secondary"
                   onClick={() => handleEditProduct(product)}
-                  sx={{ marginTop: 2, width: "100%", padding: 1 }}
+                  sx={{ width: "100%" }}
                 >
                   Modifier
                 </Button>
-              </CardContent>
+              </CardActions>
             </Card>
           </Grid>
         ))}
@@ -246,6 +306,14 @@ const AdminDashboard: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Modal d'édition de produit */}
+      <EditProductModal
+        product={productToEdit}
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSave={handleSaveEdit}
+      />
     </Box>
   );
 };
